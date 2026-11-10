@@ -14,6 +14,23 @@ const envSchema = z.object({
    */
   AUTH_RATE_LIMIT: z.enum(["true", "false"]).optional(),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+
+  /**
+   * Where uploaded files go (M3). "filesystem" writes under STORAGE_DIR and suits local
+   * development or a single server with a persistent disk. "s3" uses any S3-compatible bucket.
+   */
+  STORAGE_DRIVER: z.enum(["filesystem", "s3"]).default("filesystem"),
+  STORAGE_DIR: z.string().min(1).default(".storage"),
+  S3_BUCKET: z.string().min(1).optional(),
+  S3_REGION: z.string().min(1).default("auto"),
+  S3_ENDPOINT: z.url({ protocol: /^https?$/ }).optional(),
+  S3_ACCESS_KEY_ID: z.string().min(1).optional(),
+  S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  S3_FORCE_PATH_STYLE: z.enum(["true", "false"]).default("false"),
+  S3_PREFIX: z
+    .string()
+    .regex(/^([a-z0-9_-]+\/)*$/, "S3_PREFIX must be empty or end with a slash, e.g. production/")
+    .default(""),
 });
 
 export type Env = z.infer<typeof envSchema>;

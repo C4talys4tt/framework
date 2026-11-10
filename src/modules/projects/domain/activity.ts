@@ -20,6 +20,11 @@ export const ACTIVITY_KINDS = [
   "note_deleted",
   "note_pinned",
   "note_unpinned",
+  // M3: the Visual Library writes these through triggers.
+  "reference_added",
+  "reference_removed",
+  "moodboard_added",
+  "moodboard_removed",
 ] as const;
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
 
@@ -104,6 +109,14 @@ export function describeActivity(entry: Pick<ActivityEntry, "kind" | "data">): s
       return `pinned a note${noteLabel(data)}`;
     case "note_unpinned":
       return `unpinned a note${noteLabel(data)}`;
+    case "reference_added":
+      return `added the reference${noteLabel(data)}`;
+    case "reference_removed":
+      return data.deleted === true ? `deleted the reference${noteLabel(data)} from the library` : `removed the reference${noteLabel(data)}`;
+    case "moodboard_added":
+      return `added the moodboard${noteLabel(data)}`;
+    case "moodboard_removed":
+      return data.deleted === true ? `deleted the moodboard${noteLabel(data)}` : `moved the moodboard${noteLabel(data)} out of this project`;
   }
 }
 
