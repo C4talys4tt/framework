@@ -6,7 +6,8 @@ try {
   // No .env file: rely on the environment (CI).
 }
 
-const PORT = 3100;
+// Overridable so several checkouts can run their suites side by side.
+const PORT = Number(process.env.E2E_PORT ?? 3100);
 const baseURL = `http://127.0.0.1:${PORT}`;
 
 const databaseUrl = new URL(process.env.DATABASE_URL ?? "postgres://framework:framework@127.0.0.1:5432/framework_dev");
