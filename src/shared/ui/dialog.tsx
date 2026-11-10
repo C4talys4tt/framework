@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { Dialog as DialogPrimitive } from "radix-ui";
 import { cn } from "@/shared/lib/cn";
@@ -17,19 +17,34 @@ export function DialogContent({
   description,
   children,
   className,
+  size = "md",
 }: {
   title: string;
   description?: string;
   children: ReactNode;
   className?: string;
+  /** `lg` is for long forms: wider, higher on screen, and scrolls inside the viewport. */
+  size?: "md" | "lg";
 }) {
+  // Radix only restores focus to a <Dialog.Trigger>. Dialogs here are usually opened
+  // from ordinary buttons, so remember what had focus and give it back on close.
+  const opener = useRef<HTMLElement | null>(null);
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className={overlayClassName} />
       <DialogPrimitive.Content
+        onCloseAutoFocus={(event) => {
+          const element = opener.current;
+          opener.current = null;
+          if (element?.isConnected) {
+            event.preventDefault();
+            element.focus();
+          }
+        }}
         // Focus the field marked for it rather than the close button, which
         // comes first in the DOM.
         onOpenAutoFocus={(event) => {
+          opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
           const target = (event.currentTarget as HTMLElement).querySelector<HTMLElement>("[data-autofocus]");
           if (target) {
             event.preventDefault();
@@ -37,7 +52,8 @@ export function DialogContent({
           }
         }}
         className={cn(
-          "fixed left-1/2 top-[18vh] z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 rounded-lg border border-line bg-overlay p-5 shadow-overlay",
+          "fixed left-1/2 z-50 w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg border border-line bg-overlay p-5 shadow-overlay",
+          size === "lg" ? "top-[5vh] max-h-[90dvh] max-w-2xl overflow-y-auto overscroll-contain" : "top-[18vh] max-w-md",
           "data-[state=open]:animate-pop-in data-[state=closed]:animate-pop-out",
           className,
         )}

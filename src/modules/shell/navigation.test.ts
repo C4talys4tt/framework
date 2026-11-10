@@ -23,14 +23,14 @@ describe("module registry", () => {
     }
   });
 
-  it("exposes only Overview in M1", () => {
-    expect(MODULES.filter(isAvailable).map((module) => module.id)).toEqual(["overview"]);
+  it("exposes Overview and Projects (M1, M2)", () => {
+    expect(MODULES.filter(isAvailable).map((module) => module.id)).toEqual(["overview", "projects"]);
   });
 
   it("explains unavailable modules, with the milestone when known", () => {
-    const projects = MODULES.find((module) => module.id === "projects")!;
+    const library = MODULES.find((module) => module.id === "library")!;
     const archive = MODULES.find((module) => module.id === "archive")!;
-    expect(unavailableLabel(projects)).toBe("Projects is not available yet. Planned for milestone 2.");
+    expect(unavailableLabel(library)).toBe("Visual Library is not available yet. Planned for milestone 3.");
     expect(unavailableLabel(archive)).toBe("Archive is not available yet.");
   });
 });
@@ -45,6 +45,8 @@ describe("workspacePath", () => {
 describe("describeLocation", () => {
   it("names module pages", () => {
     expect(describeLocation("/w/studio-abc12/overview")).toEqual(["Overview"]);
+    expect(describeLocation("/w/studio-abc12/projects")).toEqual(["Projects"]);
+    expect(describeLocation("/w/studio-abc12/projects/0b0f0c6e-7f9a-4a4c-8d52-1f1b2f6a7c10/notes")).toEqual(["Projects"]);
   });
 
   it("names settings sections", () => {
@@ -55,7 +57,7 @@ describe("describeLocation", () => {
   });
 
   it("returns nothing for unknown locations", () => {
-    expect(describeLocation("/w/studio-abc12/projects")).toEqual([]);
+    expect(describeLocation("/w/studio-abc12/library")).toEqual([]);
     expect(describeLocation("/sign-in")).toEqual([]);
   });
 });

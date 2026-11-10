@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { Layers } from "lucide-react";
+import { Suspense } from "react";
+import { RecentProjects } from "@/modules/projects/components/recent-projects";
 import { MODULES, isAvailable } from "@/modules/shell/navigation";
 import { getWorkspaceContext } from "@/modules/workspaces/server/queries";
-import { EmptyState } from "@/shared/ui/empty-state";
 import { Kbd } from "@/shared/ui/kbd";
 import { LocalDate } from "@/shared/ui/local-date";
 import { PageContainer, PageHeader, SectionHeading } from "@/shared/ui/page";
@@ -15,6 +15,7 @@ const SHORTCUTS: { label: string; keys: string[] }[] = [
   { label: "Open the command palette", keys: ["⌘", "K"] },
   { label: "Collapse or expand the sidebar", keys: ["⌘", "B"] },
   { label: "Go to Overview", keys: ["G", "O"] },
+  { label: "Go to Projects", keys: ["G", "P"] },
   { label: "Go to Settings", keys: ["G", "S"] },
 ];
 
@@ -43,7 +44,7 @@ export async function Overview({ params }: { params: Promise<{ workspace: string
         <PageHeader
           eyebrow={<LocalDate options={{ weekday: "long", day: "numeric", month: "long" }} />}
           title={`Welcome, ${firstName}`}
-          description="This is the foundation of your studio. Modules arrive here as they are built."
+          description="Your studio at a glance. Modules arrive here as they are built."
         />
         <OpenPaletteButton />
       </div>
@@ -67,13 +68,9 @@ export async function Overview({ params }: { params: Promise<{ workspace: string
       <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:gap-6">
         <section aria-label="Recent work">
           <SectionHeading title="Recent work" />
-          <Surface>
-            <EmptyState
-              icon={<Layers aria-hidden className="size-4" />}
-              title="Nothing to show yet"
-              description="Recent projects, boards and notes will appear here once Projects ships in the next milestone."
-            />
-          </Surface>
+          <Suspense fallback={<Skeleton className="h-52 w-full rounded-lg" />}>
+            <RecentProjects workspaceId={workspace.id} workspaceSlug={workspace.slug} />
+          </Suspense>
         </section>
 
         <section aria-label="Keyboard shortcuts">

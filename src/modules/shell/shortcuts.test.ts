@@ -34,6 +34,7 @@ describe("go-to sequences", () => {
 
   it("resolve the second key", () => {
     expect(matchGoToTarget(key("o"))).toBe("go-overview");
+    expect(matchGoToTarget(key("p"))).toBe("go-projects");
     expect(matchGoToTarget(key("s"))).toBe("go-settings");
     expect(matchGoToTarget(key("x"))).toBeNull();
     expect(matchGoToTarget(key("o", { metaKey: true }))).toBeNull();

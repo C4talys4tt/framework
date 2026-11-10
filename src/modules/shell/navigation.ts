@@ -44,9 +44,9 @@ export const MODULES: readonly ModuleDefinition[] = [
     label: "Projects",
     description: "Plan and track creative projects from brief to delivery.",
     icon: FolderKanban,
-    status: "planned",
+    status: "available",
     milestone: "M2",
-    segment: null,
+    segment: "projects",
   },
   {
     id: "library",
@@ -120,6 +120,7 @@ export const SETTINGS_SECTIONS = [
   { id: "profile", label: "Profile", description: "Your name and identity." },
   { id: "appearance", label: "Appearance", description: "Theme, density and motion." },
   { id: "workspace", label: "Workspace", description: "This workspace's name and details." },
+  { id: "projects", label: "Projects", description: "Project statuses and categories." },
   { id: "account", label: "Account", description: "Password and sessions." },
 ] as const;
 

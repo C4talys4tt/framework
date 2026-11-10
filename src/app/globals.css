@@ -36,6 +36,16 @@
   --color-danger-soft: var(--fw-danger-soft);
   --color-success: var(--fw-success);
 
+  /* Categorical hues for statuses, categories and tags (M2). */
+  --color-hue-gray: var(--fw-hue-gray);
+  --color-hue-blue: var(--fw-hue-blue);
+  --color-hue-green: var(--fw-hue-green);
+  --color-hue-amber: var(--fw-hue-amber);
+  --color-hue-red: var(--fw-hue-red);
+  --color-hue-violet: var(--fw-hue-violet);
+  --color-hue-pink: var(--fw-hue-pink);
+  --color-hue-teal: var(--fw-hue-teal);
+
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
 
@@ -88,6 +98,15 @@
   --fw-danger-soft: rgb(242 147 138 / 0.1);
   --fw-success: #8fd8b4;
 
+  --fw-hue-gray: #8b929c;
+  --fw-hue-blue: #7cb7ff;
+  --fw-hue-green: #8fd8b4;
+  --fw-hue-amber: #e8c26a;
+  --fw-hue-red: #f2938a;
+  --fw-hue-violet: #b7a1f2;
+  --fw-hue-pink: #f0a1c8;
+  --fw-hue-teal: #6fd3d0;
+
   --fw-shadow-raised: 0 1px 0 0 rgb(255 255 255 / 0.03) inset, 0 1px 2px rgb(0 0 0 / 0.4);
   --fw-shadow-overlay: 0 0 0 1px rgb(0 0 0 / 0.5), 0 24px 64px -12px rgb(0 0 0 / 0.7);
 }
@@ -121,6 +140,15 @@
   --fw-danger: #b3362b;
   --fw-danger-soft: rgb(179 54 43 / 0.08);
   --fw-success: #1d7a52;
+
+  --fw-hue-gray: #6b7480;
+  --fw-hue-blue: #2563a8;
+  --fw-hue-green: #1d7a52;
+  --fw-hue-amber: #96690c;
+  --fw-hue-red: #b3362b;
+  --fw-hue-violet: #6d4bb8;
+  --fw-hue-pink: #ad3b78;
+  --fw-hue-teal: #17787a;
 
   --fw-shadow-raised: 0 1px 2px rgb(16 24 32 / 0.06);
   --fw-shadow-overlay: 0 0 0 1px rgb(16 24 32 / 0.06), 0 24px 64px -12px rgb(16 24 32 / 0.25);

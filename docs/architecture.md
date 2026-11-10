@@ -36,6 +36,7 @@ src/
     shell/                Sidebar, top bar, command palette, shortcuts, module registry
     overview/             The dashboard
     settings/             Settings screens
+    projects/             Projects, statuses and categories, tags, notes, activity (M2)
   infrastructure/         Environment, connection pool, user-scoped transactions, migrator
   shared/
     ui/                   Reusable, module-agnostic components
@@ -60,7 +61,8 @@ Not every module needs every part. Rules that keep the structure honest:
 - `app/` imports from `modules/` and `shared/`; modules never import from `app/`.
 - `shared/` and `infrastructure/` never import from `modules/`.
 - A module may use another module's `domain/` types and server `queries`, but never its
-  repository directly.
+  repository directly. The one composition exception is the Overview, a dashboard whose job is to
+  embed small widgets from other modules (`projects/components/recent-projects.tsx`).
 - Repositories receive a `UserScopedDb` and contain SQL only; they never read the session.
 
 ## Request flow
@@ -96,6 +98,29 @@ Isolation is enforced by PostgreSQL, not by application code remembering to filt
 RLS, add policies using `app.is_workspace_member(workspace_id)`, grant the needed privileges to
 `framework_app`, and add cases to `tests/integration`. The migration test fails if any table is
 created without RLS enabled.
+
+## Projects (M2)
+
+`modules/projects` follows the module shape above and adds a few rules of its own. The reasoning is
+in [ADR 5](adr/0005-project-data-model.md).
+
+- **Routes.** `/w/[ws]/projects` (list), `/projects/[id]` (overview), `/projects/[id]/notes`,
+  `/projects/[id]/activity`, and `/settings/projects` (statuses and categories). The project
+  layout loads the project once and renders the header and tabs; each tab streams behind its own
+  `<Suspense>`. A project id is only valid under the workspace that owns it
+  (`server/page-data.ts`), otherwise the page is not found.
+- **List state lives in the URL** (`?q=&status=&category=&tag=&sort=&view=&page=`), parsed by
+  `parseProjectFilters`, which never throws. Filters are server-rendered; `ProjectFilterBar` only
+  edits the URL. `?new=1` opens the create dialog (used by the command palette).
+- **Repositories** are split by concern (`project-`, `note-`, `activity-`, `taxonomy-repository`).
+  Expected failures (archived, name taken, status in use) are thrown as `ProjectsError` and turned
+  into form messages by `actions.ts`; anything else propagates.
+- **History is written by the database**, not by repositories. Do not add code that inserts into
+  `project_activity`.
+- **One form, two modes.** `ProjectFormDialog` creates and edits; validation runs in the browser
+  with the same Zod schema the server action uses, and the server result always wins.
+- **Dates.** Calendar dates (`due_date`, `start_date`) are `date` columns read back as
+  `YYYY-MM-DD` text, never `Date` objects, so they cannot shift with a time zone.
 
 ## Rendering model
 
@@ -153,15 +178,15 @@ no route.
 | Layer | Covers | Where |
 | --- | --- | --- |
 | Unit | Domain logic: slugs, schemas, redirect safety, shortcuts, the theme script | `src/**/*.test.ts` |
-| Integration | Migrations are reproducible; RLS isolates users; privileges are minimal | `tests/integration` |
-| Browser | Sign-up to sign-out, navigation, palette, theme persistence, isolation, settings | `tests/e2e` |
+| Integration | Migrations are reproducible; RLS isolates users; privileges are minimal; projects (integrity, triggers, activity, archive guard) | `tests/integration` |
+| Browser | Sign-up to sign-out, navigation, palette, theme persistence, isolation, settings, projects | `tests/e2e` |
 
 Integration and browser tests create and drop their own databases and never touch development
 data.
 
-## Not in M1
+## Not built yet
 
-Stated plainly so nothing is assumed to exist:
+Stated plainly so nothing is assumed to exist. Items marked M2 are about project management.
 
 - Email delivery, and therefore email verification, password reset and changing email address.
 - Inviting other people to a workspace. The membership model and policies support members, and
@@ -169,3 +194,6 @@ Stated plainly so nothing is assumed to exist:
 - Deleting a workspace or an account.
 - File storage. From M3, binaries go to object storage with only metadata in PostgreSQL.
 - A Content-Security-Policy header (needs per-request nonces; planned with M7 hardening).
+- (M2) Permanent project deletion, a board view, cross-project search, renaming or merging tags,
+  and conflict detection for simultaneous edits. See the limits in
+  [m2-acceptance.md](m2-acceptance.md).

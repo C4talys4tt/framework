@@ -86,3 +86,112 @@ export function trackPageErrors(page: Page): string[] {
   });
   return errors;
 }
+
+// ---------------------------------------------------------------------------
+// Direct database access, for arranging states the interface cannot (yet) create,
+// such as a second member in a workspace. Never used to check results of UI actions.
+// ---------------------------------------------------------------------------
+
+function e2eDatabaseUrl(): string {
+  const url = new URL(process.env.DATABASE_URL ?? "postgres://framework:framework@127.0.0.1:5432/framework_dev");
+  url.pathname = `${url.pathname}_e2e`;
+  return url.toString();
+}
+
+export async function sql<T extends Record<string, unknown> = Record<string, unknown>>(text: string, values: unknown[] = []): Promise<T[]> {
+  const { Client } = await import("pg");
+  const client = new Client({ connectionString: e2eDatabaseUrl() });
+  await client.connect();
+  try {
+    return (await client.query(text, values)).rows as T[];
+  } finally {
+    await client.end();
+  }
+}
+
+/** Adds `account` to the workspace with the given slug as a plain member. */
+export async function addMember(slug: string, account: Account): Promise<void> {
+  await sql(
+    `insert into public.workspace_members (workspace_id, user_id, role)
+     select w.id, u.id, 'member' from public.workspaces w, public.auth_users u where w.slug = $1 and u.email = $2`,
+    [slug, account.email],
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Projects
+// ---------------------------------------------------------------------------
+
+export type NewProject = {
+  name: string;
+  status?: string;
+  category?: string;
+  priority?: string;
+  client?: string;
+  startDate?: string;
+  dueDate?: string;
+  description?: string;
+  tags?: string[];
+  details?: { name: string; value: string }[];
+};
+
+export function projectsPath(page: Page): string {
+  return `/w/${workspaceSlug(page)}/projects`;
+}
+
+/** Opens the project list and waits until it is interactive. */
+export async function openProjects(page: Page, query = ""): Promise<void> {
+  await page.goto(`${projectsPath(page)}${query}`);
+  await expect(page.getByRole("heading", { level: 1, name: "Projects" })).toBeVisible();
+  await shellReady(page);
+}
+
+/** Creates a project through the dialog and returns its id once its page has opened. */
+export async function createProject(page: Page, project: NewProject): Promise<string> {
+  await openProjects(page);
+  await page.getByRole("button", { name: /^(New project|Create your first project)$/ }).first().click();
+  const dialog = page.getByRole("dialog", { name: "New project" });
+  await expect(dialog).toBeVisible();
+  await dialog.getByLabel("Name", { exact: true }).fill(project.name);
+  if (project.status) await dialog.getByLabel("Status").selectOption({ label: project.status });
+  if (project.category) await dialog.getByLabel("Category").selectOption({ label: project.category });
+  if (project.priority) await dialog.getByLabel("Priority").selectOption(project.priority);
+  if (project.client) await dialog.getByLabel("Client").fill(project.client);
+  if (project.startDate) await dialog.getByLabel("Start date").fill(project.startDate);
+  if (project.dueDate) await dialog.getByLabel("Due date").fill(project.dueDate);
+  if (project.description) await dialog.getByLabel("Description").fill(project.description);
+  for (const tag of project.tags ?? []) {
+    const input = dialog.getByLabel("Tags", { exact: true });
+    await input.fill(tag);
+    await input.press("Enter");
+  }
+  for (const [index, detail] of (project.details ?? []).entries()) {
+    await dialog.getByRole("button", { name: "Add detail" }).click();
+    await dialog.getByLabel(`Detail ${index + 1} name`).fill(detail.name);
+    await dialog.getByLabel(`Detail ${index + 1} value`).fill(detail.value);
+  }
+  await dialog.getByRole("button", { name: "Create project" }).click();
+  await page.waitForURL(/\/projects\/[0-9a-f-]{36}$/);
+  await expect(page.getByRole("heading", { level: 1, name: project.name })).toBeVisible();
+  await shellReady(page);
+  return new URL(page.url()).pathname.split("/").at(-1)!;
+}
+
+/** Local calendar date offset from today, as the date inputs expect it (YYYY-MM-DD). */
+export function dateFromToday(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
+/** The names shown in the project list, in order. */
+export async function listedProjectNames(page: Page): Promise<string[]> {
+  const rows = page.getByRole("list", { name: "Projects" }).filter({ visible: true }).getByRole("link");
+  return rows.evaluateAll((links) => links.map((link) => link.querySelector("span.truncate")?.textContent ?? ""));
+}
+
+export function activityItems(page: Page): Locator {
+  return page.getByRole("list", { name: "Activity" }).filter({ visible: true }).getByRole("listitem");
+}

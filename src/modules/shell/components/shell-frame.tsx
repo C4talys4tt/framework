@@ -62,6 +62,9 @@ export function ShellFrame({
         case "go-overview":
           router.push(workspacePath(workspace.slug, "overview"));
           break;
+        case "go-projects":
+          router.push(workspacePath(workspace.slug, "projects"));
+          break;
         case "go-settings":
           router.push(workspacePath(workspace.slug, "settings", "profile"));
           break;

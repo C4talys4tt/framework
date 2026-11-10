@@ -3,6 +3,10 @@
 M1 is the foundation and application shell. Each criterion lists how it is verified.
 "e2e" refers to `tests/e2e`, "integration" to `tests/integration`.
 
+> M2 note: Projects shipped in M2, so the examples these checks used for "a module that is not
+> built" (the unit registry test and two e2e assertions) now use Visual Library instead. The
+> behaviour being protected is unchanged. See [m2-acceptance.md](m2-acceptance.md).
+
 ## The application runs
 
 - [x] `npm run build` succeeds with no type or lint errors.

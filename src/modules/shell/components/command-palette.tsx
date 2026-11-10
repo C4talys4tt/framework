@@ -88,10 +88,10 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
             <Command.Item key={module.id} value={`go ${module.label}`} onSelect={() => go(module.segment)} className={itemClass}>
               <module.icon aria-hidden />
               {module.label}
-              {module.id === "overview" ? (
+              {module.id === "overview" || module.id === "projects" ? (
                 <Shortcut>
                   <Kbd>G</Kbd>
-                  <Kbd>O</Kbd>
+                  <Kbd>{module.id === "overview" ? "O" : "P"}</Kbd>
                 </Shortcut>
               ) : null}
             </Command.Item>
@@ -116,6 +116,18 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
               ) : null}
             </Command.Item>
           ))}
+        </Command.Group>
+
+        <Command.Group heading="Create" className={groupClass}>
+          <Command.Item
+            value="new project create"
+            keywords={["add", "start"]}
+            onSelect={() => run(() => router.push(`${workspacePath(workspace.slug, "projects")}?new=1`))}
+            className={itemClass}
+          >
+            <Plus aria-hidden />
+            New project…
+          </Command.Item>
         </Command.Group>
 
         <Command.Group heading="Workspace" className={groupClass}>
