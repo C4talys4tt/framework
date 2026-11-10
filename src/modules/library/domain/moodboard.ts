@@ -147,7 +147,17 @@ export type MoodboardInput = z.infer<typeof moodboardInputSchema>;
 export const MOODBOARD_SORTS = ["updated", "name", "created"] as const;
 export type MoodboardSort = (typeof MOODBOARD_SORTS)[number];
 
-/** True when two documents would save the same thing. */
+/**
+ * True when two documents would save the same thing. Cheap in the common case:
+ * edits replace only the elements they change, so most comparisons are by identity.
+ */
 export function sameDocument(a: BoardDocument, b: BoardDocument): boolean {
-  return a === b || JSON.stringify(a) === JSON.stringify(b);
+  if (a === b) return true;
+  if (a.background !== b.background || a.elements.length !== b.elements.length) return false;
+  for (let index = 0; index < a.elements.length; index += 1) {
+    const left = a.elements[index];
+    const right = b.elements[index];
+    if (left !== right && JSON.stringify(left) !== JSON.stringify(right)) return false;
+  }
+  return true;
 }
