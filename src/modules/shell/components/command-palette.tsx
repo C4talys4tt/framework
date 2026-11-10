@@ -6,6 +6,8 @@ import { Command } from "cmdk";
 import {
   ArrowRight,
   Check,
+  FolderPlus,
+  LayoutPanelLeft,
   LogOut,
   Monitor,
   Moon,
@@ -15,6 +17,7 @@ import {
   Search,
   Settings,
   Sun,
+  Upload,
   Zap,
 } from "lucide-react";
 import { usePreferences } from "@/modules/preferences/components/preferences-provider";
@@ -41,6 +44,8 @@ const groupClass =
   "px-1.5 pb-1.5 [&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-2.5 " +
   "[&_[cmdk-group-heading]]:text-[0.6875rem] [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:uppercase " +
   "[&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-fg-faint";
+
+const GO_TO_KEY: Record<string, string> = { overview: "O", projects: "P", library: "L" };
 
 function Shortcut({ children }: { children: ReactNode }) {
   return <span className="ml-auto flex items-center gap-1">{children}</span>;
@@ -88,10 +93,10 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
             <Command.Item key={module.id} value={`go ${module.label}`} onSelect={() => go(module.segment)} className={itemClass}>
               <module.icon aria-hidden />
               {module.label}
-              {module.id === "overview" || module.id === "projects" ? (
+              {GO_TO_KEY[module.id] ? (
                 <Shortcut>
                   <Kbd>G</Kbd>
-                  <Kbd>{module.id === "overview" ? "O" : "P"}</Kbd>
+                  <Kbd>{GO_TO_KEY[module.id]}</Kbd>
                 </Shortcut>
               ) : null}
             </Command.Item>
@@ -127,6 +132,33 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
           >
             <Plus aria-hidden />
             New project…
+          </Command.Item>
+          <Command.Item
+            value="upload references images library"
+            keywords={["add", "import", "visual"]}
+            onSelect={() => run(() => router.push(`${workspacePath(workspace.slug, "library")}?upload=1`))}
+            className={itemClass}
+          >
+            <Upload aria-hidden />
+            Upload references…
+          </Command.Item>
+          <Command.Item
+            value="new moodboard create board"
+            keywords={["add", "canvas", "visual"]}
+            onSelect={() => run(() => router.push(`${workspacePath(workspace.slug, "library", "moodboards")}?new=1`))}
+            className={itemClass}
+          >
+            <LayoutPanelLeft aria-hidden />
+            New moodboard…
+          </Command.Item>
+          <Command.Item
+            value="new collection create"
+            keywords={["add", "group", "visual"]}
+            onSelect={() => run(() => router.push(`${workspacePath(workspace.slug, "library", "collections")}?new=1`))}
+            className={itemClass}
+          >
+            <FolderPlus aria-hidden />
+            New collection…
           </Command.Item>
         </Command.Group>
 

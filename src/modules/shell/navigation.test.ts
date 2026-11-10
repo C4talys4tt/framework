@@ -23,14 +23,14 @@ describe("module registry", () => {
     }
   });
 
-  it("exposes Overview and Projects (M1, M2)", () => {
-    expect(MODULES.filter(isAvailable).map((module) => module.id)).toEqual(["overview", "projects"]);
+  it("exposes Overview, Projects and the Visual Library (M1, M2, M3)", () => {
+    expect(MODULES.filter(isAvailable).map((module) => module.id)).toEqual(["overview", "projects", "library"]);
   });
 
   it("explains unavailable modules, with the milestone when known", () => {
-    const library = MODULES.find((module) => module.id === "library")!;
+    const production = MODULES.find((module) => module.id === "production")!;
     const archive = MODULES.find((module) => module.id === "archive")!;
-    expect(unavailableLabel(library)).toBe("Visual Library is not available yet. Planned for milestone 3.");
+    expect(unavailableLabel(production)).toBe("Production is not available yet. Planned for milestone 5.");
     expect(unavailableLabel(archive)).toBe("Archive is not available yet.");
   });
 });
@@ -57,7 +57,7 @@ describe("describeLocation", () => {
   });
 
   it("returns nothing for unknown locations", () => {
-    expect(describeLocation("/w/studio-abc12/library")).toEqual([]);
+    expect(describeLocation("/w/studio-abc12/production")).toEqual([]);
     expect(describeLocation("/sign-in")).toEqual([]);
   });
 });

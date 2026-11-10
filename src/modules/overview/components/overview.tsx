@@ -16,6 +16,7 @@ const SHORTCUTS: { label: string; keys: string[] }[] = [
   { label: "Collapse or expand the sidebar", keys: ["⌘", "B"] },
   { label: "Go to Overview", keys: ["G", "O"] },
   { label: "Go to Projects", keys: ["G", "P"] },
+  { label: "Go to the Visual Library", keys: ["G", "L"] },
   { label: "Go to Settings", keys: ["G", "S"] },
 ];
 

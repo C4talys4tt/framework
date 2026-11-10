@@ -1,8 +1,13 @@
 import type { ReactNode } from "react";
 import { cn } from "@/shared/lib/cn";
 
-export function PageContainer({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn("mx-auto w-full max-w-5xl px-5 py-8 md:px-10 md:py-12", className)}>{children}</div>;
+/** `wide` is for image-heavy pages (the Visual Library), which benefit from the whole screen. */
+export function PageContainer({ children, className, width = "default" }: { children: ReactNode; className?: string; width?: "default" | "wide" }) {
+  return (
+    <div className={cn("mx-auto w-full px-5 py-8 md:px-10 md:py-12", width === "wide" ? "max-w-[100rem]" : "max-w-5xl", className)}>
+      {children}
+    </div>
+  );
 }
 
 export function PageHeader({ eyebrow, title, description }: { eyebrow?: ReactNode; title: ReactNode; description?: ReactNode }) {

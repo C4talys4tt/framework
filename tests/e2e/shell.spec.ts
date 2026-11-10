@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { andSaved, shellReady, sidebar, signUp, workspaceSlug } from "./helpers";
 
-const PLANNED = ["Visual Library", "Production", "Assets", "Effects Lab", "Journal", "Archive"];
+const PLANNED = ["Production", "Assets", "Effects Lab", "Journal", "Archive"];
 
 test.describe("workspace shell", () => {
   test.beforeEach(async ({ page }) => {
@@ -29,7 +29,7 @@ test.describe("workspace shell", () => {
     await expect(page).toHaveURL(url);
 
     // Their routes do not exist either.
-    await page.goto(`/w/${workspaceSlug(page)}/library`);
+    await page.goto(`/w/${workspaceSlug(page)}/production`);
     await expect(page.getByRole("heading", { name: "This page is out of frame" })).toBeVisible();
   });
 
@@ -69,8 +69,8 @@ test.describe("workspace shell", () => {
   test("the command palette lists unfinished modules as disabled", async ({ page }) => {
     await page.getByRole("button", { name: "Search and commands" }).click();
     const palette = page.getByRole("dialog", { name: "Command palette" });
-    await page.keyboard.type("library");
-    const option = palette.getByRole("option", { name: /Visual Library/ });
+    await page.keyboard.type("production");
+    const option = palette.getByRole("option", { name: /Production/ });
     await expect(option).toHaveAttribute("aria-disabled", "true");
     await page.keyboard.press("Enter");
     await expect(palette).toBeVisible();

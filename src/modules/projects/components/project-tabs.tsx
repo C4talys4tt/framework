@@ -10,6 +10,9 @@ export function ProjectTabs({ base, noteCount }: { base: string; noteCount: numb
   const tabs = [
     { href: base, label: "Overview" },
     { href: `${base}/notes`, label: "Notes", count: noteCount },
+    // M3: the Visual Library's view of this project.
+    { href: `${base}/references`, label: "References" },
+    { href: `${base}/moodboards`, label: "Moodboards" },
     { href: `${base}/activity`, label: "Activity" },
   ];
   return (

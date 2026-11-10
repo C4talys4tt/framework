@@ -350,3 +350,35 @@ export async function deleteMoodboardAction(input: { moodboardId: string }): Pro
     return ok();
   });
 }
+
+export async function removeManyFromCollectionAction(input: { collectionId: string; referenceIds: string[] }): Promise<ActionResult<{ removed: number }>> {
+  return act(async (user) => {
+    const parsed = z.object({ collectionId: id, referenceIds: ids }).safeParse(input);
+    if (!parsed.success) return fail(NOT_FOUND);
+    const removed = await withUser(user.id, async (db) => {
+      let count = 0;
+      for (const referenceId of parsed.data.referenceIds) {
+        if (await removeFromCollection(db, parsed.data.collectionId, referenceId)) count += 1;
+      }
+      return count;
+    });
+    refresh();
+    return ok({ removed });
+  });
+}
+
+export async function unlinkManyFromProjectAction(input: { projectId: string; referenceIds: string[] }): Promise<ActionResult<{ removed: number }>> {
+  return act(async (user) => {
+    const parsed = z.object({ projectId: id, referenceIds: ids }).safeParse(input);
+    if (!parsed.success) return fail(NOT_FOUND);
+    const removed = await withUser(user.id, async (db) => {
+      let count = 0;
+      for (const referenceId of parsed.data.referenceIds) {
+        if (await unlinkReferenceFromProject(db, parsed.data.projectId, referenceId)) count += 1;
+      }
+      return count;
+    });
+    refresh();
+    return ok({ removed });
+  });
+}

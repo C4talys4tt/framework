@@ -8,7 +8,7 @@ export type KeyLike = {
   shiftKey: boolean;
 };
 
-export type ShortcutCommand = "toggle-palette" | "toggle-sidebar" | "go-overview" | "go-projects" | "go-settings";
+export type ShortcutCommand = "toggle-palette" | "toggle-sidebar" | "go-overview" | "go-projects" | "go-library" | "go-settings";
 
 export const GO_TO_PREFIX = "g";
 export const SEQUENCE_TIMEOUT_MS = 1200;
@@ -16,6 +16,7 @@ export const SEQUENCE_TIMEOUT_MS = 1200;
 const GO_TO_TARGETS: Record<string, ShortcutCommand> = {
   o: "go-overview",
   p: "go-projects",
+  l: "go-library",
   s: "go-settings",
 };
 

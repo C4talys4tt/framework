@@ -51,11 +51,11 @@ export const MODULES: readonly ModuleDefinition[] = [
   {
     id: "library",
     label: "Visual Library",
-    description: "Images, videos, references and moodboards.",
+    description: "References, collections and moodboards.",
     icon: Images,
-    status: "planned",
+    status: "available",
     milestone: "M3",
-    segment: null,
+    segment: "library",
   },
   {
     id: "production",
