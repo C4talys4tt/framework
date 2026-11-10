@@ -1,26 +1,249 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * FRAMEWORK design tokens.
+ *
+ * Components only ever use the semantic Tailwind colours declared in @theme
+ * (bg-surface, text-fg-muted, border-line, ...). Themes swap the --fw-*
+ * values underneath them, keyed off attributes on <html> that the appearance
+ * script sets before first paint.
+ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--fw-canvas);
+  --color-surface: var(--fw-surface);
+  --color-raised: var(--fw-raised);
+  --color-overlay: var(--fw-overlay);
+  --color-hover: var(--fw-hover);
+  --color-active: var(--fw-active);
+  --color-scrim: var(--fw-scrim);
+
+  --color-line: var(--fw-line);
+  --color-line-subtle: var(--fw-line-subtle);
+  --color-line-strong: var(--fw-line-strong);
+
+  --color-fg: var(--fw-fg);
+  --color-fg-muted: var(--fw-fg-muted);
+  --color-fg-faint: var(--fw-fg-faint);
+
+  --color-accent: var(--fw-accent);
+  --color-accent-strong: var(--fw-accent-strong);
+  --color-accent-soft: var(--fw-accent-soft);
+  --color-accent-line: var(--fw-accent-line);
+  --color-on-accent: var(--fw-on-accent);
+
+  --color-danger: var(--fw-danger);
+  --color-danger-soft: var(--fw-danger-soft);
+  --color-success: var(--fw-success);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --shadow-raised: var(--fw-shadow-raised);
+  --shadow-overlay: var(--fw-shadow-overlay);
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-in: fw-fade-in 160ms var(--ease-out-quint);
+  --animate-fade-out: fw-fade-out 120ms ease-in;
+  --animate-pop-in: fw-pop-in 180ms var(--ease-out-quint);
+  --animate-pop-out: fw-pop-out 120ms ease-in;
+  --animate-slide-in-left: fw-slide-in-left 220ms var(--ease-out-quint);
+  --animate-slide-out-left: fw-slide-out-left 160ms ease-in;
+  --animate-shimmer: fw-shimmer 1.6s ease-in-out infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  color-scheme: dark;
+
+  --fw-canvas: #0a0b0d;
+  --fw-surface: #101215;
+  --fw-raised: #15181c;
+  --fw-overlay: #191c21;
+  --fw-hover: rgb(255 255 255 / 0.045);
+  --fw-active: rgb(255 255 255 / 0.075);
+  --fw-scrim: rgb(4 5 6 / 0.72);
+
+  --fw-line: rgb(255 255 255 / 0.09);
+  --fw-line-subtle: rgb(255 255 255 / 0.055);
+  --fw-line-strong: rgb(255 255 255 / 0.16);
+
+  --fw-fg: #e9ebee;
+  --fw-fg-muted: #9ba2ac;
+  --fw-fg-faint: #6c737e;
+
+  --fw-accent: #a5d8f6;
+  --fw-accent-strong: #c9e8fb;
+  --fw-accent-soft: rgb(165 216 246 / 0.1);
+  --fw-accent-line: rgb(165 216 246 / 0.32);
+  --fw-on-accent: #07151e;
+
+  --fw-danger: #f2938a;
+  --fw-danger-soft: rgb(242 147 138 / 0.1);
+  --fw-success: #8fd8b4;
+
+  --fw-shadow-raised: 0 1px 0 0 rgb(255 255 255 / 0.03) inset, 0 1px 2px rgb(0 0 0 / 0.4);
+  --fw-shadow-overlay: 0 0 0 1px rgb(0 0 0 / 0.5), 0 24px 64px -12px rgb(0 0 0 / 0.7);
+}
+
+/* The light palette, written once and applied by two selectors below. */
+@utility fw-light-palette {
+  color-scheme: light;
+
+  --fw-canvas: #f3f4f6;
+  --fw-surface: #fafbfc;
+  --fw-raised: #ffffff;
+  --fw-overlay: #ffffff;
+  --fw-hover: rgb(16 24 32 / 0.045);
+  --fw-active: rgb(16 24 32 / 0.08);
+  --fw-scrim: rgb(20 24 30 / 0.38);
+
+  --fw-line: rgb(16 24 32 / 0.11);
+  --fw-line-subtle: rgb(16 24 32 / 0.07);
+  --fw-line-strong: rgb(16 24 32 / 0.2);
+
+  --fw-fg: #14181d;
+  --fw-fg-muted: #57606b;
+  --fw-fg-faint: #7d8691;
+
+  --fw-accent: #1b6f9e;
+  --fw-accent-strong: #145a82;
+  --fw-accent-soft: rgb(27 111 158 / 0.09);
+  --fw-accent-line: rgb(27 111 158 / 0.35);
+  --fw-on-accent: #ffffff;
+
+  --fw-danger: #b3362b;
+  --fw-danger-soft: rgb(179 54 43 / 0.08);
+  --fw-success: #1d7a52;
+
+  --fw-shadow-raised: 0 1px 2px rgb(16 24 32 / 0.06);
+  --fw-shadow-overlay: 0 0 0 1px rgb(16 24 32 / 0.06), 0 24px 64px -12px rgb(16 24 32 / 0.25);
+}
+
+:root[data-theme="light"] {
+  @apply fw-light-palette;
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"] {
+    @apply fw-light-palette;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Compact density tightens the whole spacing and type scale together. */
+:root[data-density="compact"] {
+  --spacing: 0.22rem;
+  font-size: 15px;
+}
+
+@layer base {
+  html {
+    background: var(--fw-canvas);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--fw-canvas);
+    color: var(--fw-fg);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--fw-accent-line);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--fw-accent);
+    outline-offset: 2px;
+  }
+
+  /* Programmatic focus targets (route announcer, main region) need no ring. */
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--fw-line-strong) transparent;
+  }
+}
+
+@keyframes fw-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fw-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fw-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.985);
+  }
+}
+@keyframes fw-pop-out {
+  to {
+    opacity: 0;
+    transform: translateY(2px) scale(0.99);
+  }
+}
+@keyframes fw-slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes fw-slide-out-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes fw-shimmer {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Honour both the OS setting and the in-app "Reduce motion" preference. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+:root[data-motion="reduce"] *,
+:root[data-motion="reduce"] *::before,
+:root[data-motion="reduce"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

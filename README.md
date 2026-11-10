@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FRAMEWORK
 
-## Getting Started
+A creative production workspace for motion designers, video editors, VFX artists and filmmakers.
 
-First, run the development server:
+**Status: Milestone 1 (foundation and application shell).** Accounts, isolated workspaces, the
+workspace shell, the Overview dashboard, command navigation, theming and settings work end to end.
+The remaining modules (Projects, Visual Library, Production, Assets, Effects Lab, Journal, Archive)
+are listed in the interface as unavailable and have no routes yet.
+
+## Requirements
+
+- Node.js 22.18 or newer (scripts are TypeScript run directly by Node)
+- PostgreSQL 15 or newer (16 is used in development)
+
+## Getting started
 
 ```bash
+docker compose up -d          # or point DATABASE_URL at any PostgreSQL server
+cp .env.example .env          # then set AUTH_SECRET (openssl rand -base64 32)
+npm install
+npm run db:migrate
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 and create an account. Your first workspace is created automatically.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The database role in `DATABASE_URL` must be able to create tables, functions and the
+`framework_app` role (`CREATEROLE`). To run the tests it also needs `CREATEDB`, because the suites
+create throwaway databases next to the development one.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Commands
 
-## Learn More
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` / `npm start` | Production build and server |
+| `npm run db:migrate` | Apply pending SQL migrations |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript, strict |
+| `npm run test:unit` | Unit tests (Vitest) |
+| `npm run test:integration` | Migration and row-level-security tests against real PostgreSQL |
+| `npm test` | Unit and integration tests |
+| `npm run test:e2e` | Browser tests (Playwright) against a production build and a fresh database |
 
-To learn more about Next.js, take a look at the following resources:
+## Keyboard
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Keys | Action |
+| --- | --- |
+| `⌘K` / `Ctrl+K` | Command palette |
+| `⌘B` / `Ctrl+B` | Collapse or expand the sidebar |
+| `G` then `O` | Go to Overview |
+| `G` then `S` | Go to Settings |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentation
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Architecture](docs/architecture.md): structure, request flow, isolation model, conventions
+- [M1 acceptance criteria](docs/m1-acceptance.md): what "done" means and how each item is verified
+- [Decision records](docs/adr): why the main technical choices were made
