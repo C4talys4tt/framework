@@ -7,7 +7,7 @@ Last updated: 2026-11-10
 | Milestone | Scope | State |
 | --- | --- | --- |
 | M1 | Foundation: accounts, isolated workspaces, shell, Overview, command palette, theming, settings | Done |
-| M2 | Project management: projects, statuses, categories, tags, metadata, notes, activity history | Done (this change; not yet committed) |
+| M2 | Project management: projects, statuses, categories, tags, metadata, notes, activity history | Done (branch `m2-project-management`) |
 | M3 | Visual Library | Not started |
 | M4 | Assets | Not started |
 | M5 | Production | Not started |
@@ -49,7 +49,7 @@ is verified in [docs/m2-acceptance.md](docs/m2-acceptance.md).
 - Statuses and categories are per-workspace data, editable by owners.
 - Archived projects are read-only in the database, not just the interface.
 - Migration `0002_projects.sql` was edited several times while M2 was in progress, before it was
-  committed or applied anywhere but throwaway databases. **From the first commit it is immutable**,
+  committed or applied anywhere but throwaway databases. **Since the first commit it is immutable**,
   like `0001`: further changes need a `0003_*.sql`.
 
 ## Known limits and open items
@@ -60,7 +60,7 @@ is verified in [docs/m2-acceptance.md](docs/m2-acceptance.md).
   an automated audit or a screen reader.
 - Email delivery, verification, password reset and a Content-Security-Policy are still not built
   (see "Not built yet" in docs/architecture.md).
-- This work is in the working tree only. Nothing has been committed or pushed.
+- M2 lives on the `m2-project-management` branch and has not been merged to `main` yet.
 
 ## Next
 
